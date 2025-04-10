@@ -39,7 +39,7 @@
                 <q-btn label="Adicionar Jogador ao Time 2" icon="add" @click="adicionarJogador(7)" class="q-mt-sm" />
 
                 <!-- RESERVAS -->
-                <div class="text-subtitle1 q-mt-md">Reservas</div>
+                <div class="text-subtitle1 q-mt-md">Banco de reservas</div>
                 <q-list bordered separator>
                     <q-item v-for="(reserva, index) in times.reservas" :key="'res-' + index">
                         <q-item-section>

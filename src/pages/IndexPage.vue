@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center q-pa-lg">
     <div class="text-center">
-      <div class="text-h4 text-bold q-mb-md">Fut-Pagglo</div>
+      <div class="text-h4 text-bold q-mb-md">Fut-App</div>
       <div class="text-subtitle1 q-mb-xl">Organize seu futebol com facilidade!</div>
 
       <div class="q-gutter-md">

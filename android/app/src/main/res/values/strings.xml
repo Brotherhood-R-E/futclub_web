@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">futpagglo</string>
+    <string name="title_activity_main">futpagglo</string>
+    <string name="package_name">com.futpagglo.app</string>
+    <string name="custom_url_scheme">com.futpagglo.app</string>
+</resources>
