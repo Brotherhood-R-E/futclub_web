@@ -3,7 +3,7 @@
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
-        <q-toolbar-title>Fut App</q-toolbar-title>
+        <q-toolbar-title>Fut-App</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -44,6 +44,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
   </q-layout>
 </template>
 
