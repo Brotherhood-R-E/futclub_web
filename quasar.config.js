@@ -5,6 +5,9 @@ import { defineConfig } from '#q-app/wrappers'
 
 export default defineConfig((/* ctx */) => {
   return {
+    publicPath: process.env.DEPLOY_ENV === 'GH_PAGES'
+      ? '/https://github.com/Brotherhood-R-E/futclub_web/tree/gh-pages/'
+      : '/',
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
 
@@ -39,8 +42,13 @@ export default defineConfig((/* ctx */) => {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20'
       },
-
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      publicPath: '/futclub_web/',
+      vueRouterMode: 'hash',
+      env: {
+        DEFAULT_LOCALE: 'pt-BR', // ou seu idioma preferido
+        DEFAULT_FALLBACK_LOCALE: 'pt-BR'
+      },
+      // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
