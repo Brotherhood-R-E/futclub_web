@@ -1,0 +1,6 @@
+{
+  "appId": "com.futpagglo.app",
+  "appName": "futpagglo",
+  "webDir": "dist/spa",
+  "bundledWebRuntime": false
+}

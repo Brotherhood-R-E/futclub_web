@@ -1,0 +1,6 @@
+{
+  "appId": "com.cassiano.futapp",
+  "appName": "Fut-Pagglo",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
