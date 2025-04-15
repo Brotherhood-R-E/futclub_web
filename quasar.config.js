@@ -42,7 +42,7 @@ export default defineConfig((/* ctx */) => {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20'
       },
-      publicPath: '/futclub_web/',
+      publicPath: '/',
       vueRouterMode: 'hash',
       env: {
         DEFAULT_LOCALE: 'pt-BR', // ou seu idioma preferido
