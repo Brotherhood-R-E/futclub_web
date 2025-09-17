@@ -4,6 +4,8 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
         <q-toolbar-title>Fut-App</q-toolbar-title>
+        <q-space />
+        <q-btn dense flat round :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleDark" />
       </q-toolbar>
     </q-header>
 
@@ -50,9 +52,11 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useQuasar } from 'quasar';
 
 export default {
   setup() {
+    const $q = useQuasar();
     const leftDrawerOpen = ref(false);
     const regrasJogo = ref("");
 
@@ -68,10 +72,15 @@ export default {
       alert("Regras salvas!");
     };
 
+    const toggleDark = () => {
+      $q.dark.set(!$q.dark.isActive);
+    };
+
     return {
       leftDrawerOpen,
       regrasJogo,
       salvarRegras,
+      toggleDark,
     };
   },
 };

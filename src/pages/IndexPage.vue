@@ -1,17 +1,21 @@
 <template>
-  <q-page class="flex flex-center q-pa-lg">
-    <div class="text-center">
-      <div class="text-h4 text-bold q-mb-md">Fut-App</div>
-      <div class="text-subtitle1 q-mb-xl">Organize seu futebol com facilidade!</div>
+  <q-page class="q-pa-lg">
+    <div class="app-container q-mx-auto">
+      <q-card class="elevated-card shadow-2">
+        <q-card-section class="text-center">
+          <div class="text-h4 text-weight-bold q-mb-xs">Fut-App</div>
+          <div class="text-subtitle1 text-grey-7">Organize seu futebol com facilidade!</div>
+        </q-card-section>
 
-      <div class="q-gutter-md">
-        <q-btn label="Sortear Times" icon="sports_soccer" color="primary" size="lg" class="full-width"
-          @click="$router.push('/sorteio')" to="/sortear" />
-        <q-btn label="Lista do Fut" icon="list" color="secondary" size="lg" class="full-width"
-          @click="$router.push('/lista')" to="/lista-fut" />
-        <q-btn label="Regras do jogo" icon="rule" color="accent" size="lg" class="full-width"
-          @click="$router.push('/regras')" to="/regras-do-jogo" />
-      </div>
+        <q-separator />
+        <q-card-section>
+          <div class="q-gutter-md">
+            <q-btn label="Sortear Times" icon="sports_soccer" color="primary" size="lg" class="full-width-btn" to="/sortear" />
+            <q-btn label="Lista do Fut" icon="list" color="secondary" size="lg" class="full-width-btn" to="/lista-fut" />
+            <q-btn label="Regras do jogo" icon="rule" color="accent" size="lg" class="full-width-btn" to="/regras-do-jogo" />
+          </div>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>

@@ -1,6 +1,24 @@
 <template>
     <q-page class="q-pa-md">
-        <q-card>
+        <div class="app-container">
+        <!-- Partida atual -->
+        <q-card class="elevated-card shadow-2 q-mb-md">
+            <q-card-section>
+                <div class="row items-center justify-between">
+                    <div>
+                        <div class="text-subtitle1">Partida atual</div>
+                        <div class="text-h6">{{ tempoFormatado }}</div>
+                    </div>
+                    <div class="row q-gutter-sm">
+                        <q-btn label="Iniciar" color="primary" @click="iniciarCronometro" :disable="cronometroAtivo" />
+                        <q-btn label="Pausar" color="warning" @click="pausarCronometro" :disable="!cronometroAtivo" />
+                        <q-btn label="Reiniciar" color="negative" @click="reiniciarCronometro" />
+                    </div>
+                </div>
+            </q-card-section>
+        </q-card>
+
+        <q-card class="elevated-card shadow-2">
             <q-card-section>
                 <div class="text-h5">Times Salvos</div>
             </q-card-section>
@@ -10,11 +28,14 @@
                 <div v-for="(time, tIndex) in times" :key="'time-' + tIndex" class="q-mb-md">
                     <div class="text-subtitle1 row items-center justify-between">
                         <span>Time {{ tIndex + 1 }}</span>
-                        <span>{{ time.length }}/7 jogadores</span>
+                        <q-badge color="primary" outline>{{ time.length }}/7</q-badge>
                     </div>
 
                     <q-list bordered separator>
                         <q-item v-for="(jogador, jIndex) in time" :key="'jogador-' + jIndex">
+                            <q-item-section avatar>
+                                <q-avatar color="secondary" text-color="white">{{ getInicial(jogador) }}</q-avatar>
+                            </q-item-section>
                             <q-item-section>
                                 <q-input v-model="times[tIndex][jIndex]" dense />
                             </q-item-section>
@@ -39,6 +60,9 @@
                 <div class="text-subtitle1">Reservas</div>
                 <q-list bordered separator>
                     <q-item v-for="(reserva, index) in reservas" :key="'reserva-' + index">
+                        <q-item-section avatar>
+                            <q-avatar color="grey-7" text-color="white">{{ getInicial(reserva) }}</q-avatar>
+                        </q-item-section>
                         <q-item-section>
                             <q-input v-model="reservas[index]" dense />
                         </q-item-section>
@@ -51,13 +75,13 @@
             <!-- Adicionar novo jogador à reserva -->
             <q-card-section>
                 <div class="text-subtitle1">Adicionar Jogador à Reserva</div>
-                <q-input v-model="novoJogador" label="Nome do Jogador" dense />
+                <q-input ref="novoJogadorInput" v-model="novoJogador" label="Nome do Jogador" dense @keyup.enter="adicionarNovoJogador" />
                 <q-btn label="Adicionar" color="primary" @click="adicionarNovoJogador" :disable="!novoJogador" />
             </q-card-section>
 
 
-            <!-- Cronômetro -->
-            <q-card-section>
+            <!-- Cronômetro (mantido oculto pois está acima) -->
+            <q-card-section v-if="false">
                 <div class="text-subtitle1 q-mb-sm">Cronômetro do Fut</div>
                 <div class="text-h6 q-mb-md">{{ tempoFormatado }}</div>
                 <div class="row q-gutter-sm">
@@ -72,13 +96,33 @@
                 <q-btn label="Salvar Alterações" color="primary" @click="salvarAlteracoes" />
                 <q-btn label="Limpar Tudo" color="negative" @click="limparTudo" />
             </q-card-section>
-        </q-card>
 
-        <!-- Botão flutuante de sorteio -->
-        <q-btn v-if="temJogadores" icon="shuffle" round color="orange" @click="confirmarSorteio"
-            class="q-fab absolute-bottom-right q-ma-md" glossy size="lg">
-            <q-tooltip>Refazer sorteio</q-tooltip>
-        </q-btn>
+            <!-- Rotação pós-partida -->
+            <q-separator />
+            <q-card-section v-if="times.length >= 2" class="q-gutter-sm">
+                <div class="text-subtitle1">Encerrar partida e rotacionar</div>
+                <div class="row items-center q-gutter-sm">
+                    <q-select
+                        v-model="timePerdedor"
+                        :options="opcoesTimes"
+                        label="Time perdedor"
+                        dense outlined style="min-width: 220px"
+                    />
+                    <q-btn label="Encerrar partida" color="orange"
+                        :disable="timePerdedor === null"
+                        @click="encerrarPartida" />
+                </div>
+                <div class="text-caption text-grey-7">Regra: o time perdedor vai para a reserva; entram os próximos 7 da fila formando o novo time.</div>
+            </q-card-section>
+        </q-card>
+        </div>
+
+        <!-- FABs contextuais -->
+        <q-fab v-if="temJogadores" icon="add" direction="up" color="primary" class="q-fab absolute-bottom-right q-ma-md">
+            <q-fab-action color="primary" icon="person_add" @click="focarAdicionarReserva" label="Adicionar jogador" />
+            <q-fab-action color="orange" icon="shuffle" @click="confirmarSorteio" label="Refazer sorteio" />
+            <q-fab-action color="secondary" icon="flag" @click="abrirEncerrarPartida" label="Encerrar partida" />
+        </q-fab>
     </q-page>
 </template>
 
@@ -99,6 +143,8 @@ export default {
         const cronometro = ref(0);
         const cronometroAtivo = ref(false);
         let intervalo = null;
+        const timePerdedor = ref(null);
+        const novoJogadorInput = ref(null);
 
         // Carrega dados salvos
         onMounted(() => {
@@ -152,6 +198,7 @@ export default {
             // Adiciona o novo jogador à reserva e limpa o campo de entrada
             reservas.value.push(novoJogador.value.trim());
             novoJogador.value = "";  // Limpa o campo de entrada
+            novoJogadorInput.value?.focus?.();
 
             $q.notify({
                 type: 'positive',
@@ -231,6 +278,29 @@ export default {
             });
         };
 
+        // Opções de select para times
+        const opcoesTimes = computed(() => times.value.map((_, idx) => ({ label: `Time ${idx + 1}`, value: idx })));
+
+        // Encerrar partida / Rotação
+        const encerrarPartida = () => {
+            const perd = timePerdedor.value?.value ?? timePerdedor.value;
+            if (perd === null || perd === undefined) return;
+            if (times.value.length < 2) return;
+
+            const jogadoresPerdedores = times.value[perd].splice(0);
+            // time perdedor vai para o fim da fila de reservas
+            reservas.value.push(...jogadoresPerdedores);
+
+            // puxar até 7 da reserva para formar o novo time
+            const novos = reservas.value.splice(0, 7);
+            times.value[perd] = novos;
+
+            // feedback e persistência
+            localStorage.setItem('timesSalvos', JSON.stringify({ times: times.value, reservas: reservas.value }));
+            timePerdedor.value = null;
+            $q.notify({ type: 'positive', message: 'Partida encerrada. Times rotacionados.', position: 'top' });
+        };
+
         // CRONÔMETRO
         const iniciarCronometro = () => {
             if (!cronometroAtivo.value) {
@@ -259,6 +329,15 @@ export default {
             return `${horas}:${minutos}:${segundos}`;
         });
 
+        const getInicial = (nome) => (nome || '').trim().charAt(0).toUpperCase();
+        const focarAdicionarReserva = () => novoJogadorInput.value?.focus?.();
+        const abrirEncerrarPartida = () => {
+            if (opcoesTimes.value.length >= 2) {
+                timePerdedor.value = opcoesTimes.value[0];
+                $q.notify({ type: 'info', message: 'Selecione o time perdedor e confirme.', position: 'top' });
+            }
+        };
+
         return {
             times,
             reservas,
@@ -277,7 +356,14 @@ export default {
             pausarCronometro,
             reiniciarCronometro,
             tempoFormatado,
-            cronometroAtivo
+            cronometroAtivo,
+            timePerdedor,
+            opcoesTimes,
+            encerrarPartida,
+            getInicial,
+            focarAdicionarReserva,
+            abrirEncerrarPartida,
+            novoJogadorInput
         };
     }
 };
